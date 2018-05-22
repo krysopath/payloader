@@ -2,23 +2,34 @@
 
 uuencode=1
 binary=0
+path=${1}
 
 function untar_payload()
 {
-	match=$(grep --text --line-number '^PAYLOAD:$' $0 | cut -d ':' -f 1)
-	payload_start=$((match + 1))
-	if [[ $binary -ne 0 ]]; then
-		tail -n +$payload_start $0 | tar -tzvf -
-	fi
-	if [[ $uuencode -ne 0 ]]; then
-		tail -n +$payload_start $0 | uudecode | tar -tzvf -
-	fi
+  match=$(\
+    grep \
+      --text \
+      --line-number \
+      '^PAYLOAD:$' $0 \
+    | cut -d ':' -f 1 \
+  )
+  payload_start=$((match + 1))
+
+  if test $binary -ne 0
+  then
+    tail -n +$payload_start $0 \
+    | tar -xzvf - -C $path
+  fi
+
+  if test $uuencode -ne 0 
+  then
+    tail -n +$payload_start $0 \
+    | uudecode \
+    | tar -xzvf - -C $path
+  fi
 }
 
-read -p "Install files? " ans
-if [[ "${ans:0:1}"  ||  "${ans:0:1}" ]]; then
-	untar_payload
-	# Do remainder of install steps.
-fi
+mkdir $path
+untar_payload
 
 exit 0
