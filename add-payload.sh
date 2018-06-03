@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -ex
 
 uuencode="on"
 if test "$1" = '--binary'
