@@ -10,6 +10,7 @@ exit 11  #)Created by argbash-init v2.6.1
 # ARGBASH_GO
 
 # [ <-- needed because of Argbash`
+
 if test "$_arg_binary" = 'on'
 then
   sed \
