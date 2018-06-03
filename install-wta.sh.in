@@ -1,0 +1,35 @@
+#!/bin/bash -ex
+
+uuencode=1
+binary=0
+path=${1}
+
+function untar_payload()
+{
+  match=$(\
+    grep \
+      --text \
+      --line-number \
+      '^PAYLOAD:$' $0 \
+    | cut -d ':' -f 1 \
+  )
+  payload_start=$((match + 1))
+
+  if test $binary -ne 0
+  then
+    tail -n +$payload_start $0 \
+    | tar -xzvf - -C $path
+  fi
+
+  if test $uuencode -ne 0 
+  then
+    tail -n +$payload_start $0 \
+    | uudecode \
+    | tar -xzvf - -C $path
+  fi
+}
+
+mkdir $path
+untar_payload
+
+exit 0
